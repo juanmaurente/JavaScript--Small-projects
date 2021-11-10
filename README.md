@@ -1,6 +1,6 @@
 # JavaScript--Small-projects
 
-This repository holds a variety of JavaScript projects included in the course Modern JavaScript by Brad Traversy.
+This repository holds a variety of JavaScript projects included in the course Modern JavaScript by Traversy Media.
 
 These projects are:
 - Task List
