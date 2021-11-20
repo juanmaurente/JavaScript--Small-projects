@@ -7,3 +7,5 @@ These projects are:
 - Loan Calculator
 - Guess the Number Game
 - Book Library
+- Github user finder
+- 
