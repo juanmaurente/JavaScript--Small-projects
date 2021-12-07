@@ -37,6 +37,9 @@
     42) We want 37 and 40 when the app initialize
     -------------------
     43) Working with edit button. UI Controler create a method ClearEditState function
+    44)uncomment html buttons, add them to the uiselectors but then hide them
+    45)Edit icon click event. Event Delegation
+    46) Create the item edit submit function  in App Control
 
 
     
@@ -103,7 +106,27 @@
                     
                     return newItem;
                 },
-                //(38) Create the getTotalCalories function
+                //(48) get the element by id. loop throug the items, if the id that has been passed is there, we return that item
+                getItemById: function(id){
+                    let found = null;
+                    // Loop through items
+                    data.items.forEach(function(item){
+                      if(item.id === id){
+                        found = item;
+                      }
+                    });
+                    return found;
+                  },
+                  //(50) set current item to item
+                setCurrentItem: function(item){
+                    data.currentItem = item;
+                  },
+
+                getCurrentItem: function(){
+                    return data.currentItem;
+                  },
+                
+                  //(38) Create the getTotalCalories function
                 getTotalCalories: function(){   //loop throuh the list items and take the calories
                     let total = 0;
 
@@ -132,12 +155,12 @@
             itemList: '#item-list',
             addBtn: '.add-btn',
             updateBtn: '.update-btn',
-            deleteBtn: 'delete-btn',
+            deleteBtn: '.delete-btn',
             backBtn: '.back-btn',
             itemNameInput: '#item-name',
             itemCaloriesInput: '#item-calories',
             totalCalories: '.total-calories'
-        }
+          }
     
         return {
             //(9) create function populate List that loops through the items and make each into a list item and insert into the <ul>
@@ -170,12 +193,11 @@
                 //(37) Show the list of items
                 document.querySelector(UISelectors.itemList).style.display = 'block';
 
-
                 //(30) create a li element with class collection item and id
                 const li = document.createElement('li');
-
                 li.className = 'collection-item';
                 li.id = `item-${item.id}`;
+                
                 //Add HTML
                 li.innerHTML = `<strong>${item.name}: </strong> <em>${item.calories} Calories</em>
                 <a href="#" class="secondary-content">
@@ -191,6 +213,12 @@
                 document.querySelector(UISelectors.itemNameInput).value = '';
                 document.querySelector(UISelectors.itemCaloriesInput).value = '';
             },
+            //add the current item that has been selected into the form inputs
+            addItemToForm: function(){
+                document.querySelector(UISelectors.itemNameInput).value = ItemCtrl.getCurrentItem().name;
+                document.querySelector(UISelectors.itemCaloriesInput).value = ItemCtrl.getCurrentItem().calories;
+                UICtrl.showEditState();
+              },
             //(35) hide the list to avoid the line
             hideList: function(){
                 document.querySelector(UISelectors.itemList).style.display = 'none';
@@ -200,14 +228,21 @@
                 document.querySelector(UISelectors.totalCalories).textContent = totalCalories;
             },
             //43) EDIT BUTTON UI Controler create a method ClearEditState function
-            /*clearEditState: function(){
+            clearEditState: function(){
                 UICtrl.clearInput();
                 //(44) Hide the buttons form the begining. They still show until in the init we call this
-                document.querySelector(UISelectors.addBtn).style.display = 'inline';
+                document.querySelector(UISelectors.updateBtn).style.display = 'none';
                 document.querySelector(UISelectors.deleteBtn).style.display = 'none';
                 document.querySelector(UISelectors.backBtn).style.display = 'none';
-                document.querySelector(UISelectors.updateBtn).style.display = 'none';
-            },*/
+                document.querySelector(UISelectors.addBtn).style.display = 'inline';  
+            },
+            //()----------------------------------------------------------------------------------------------
+            showEditState: function(){
+                document.querySelector(UISelectors.updateBtn).style.display = 'inline';
+                document.querySelector(UISelectors.deleteBtn).style.display = 'inline';
+                document.querySelector(UISelectors.backBtn).style.display = 'inline';
+                document.querySelector(UISelectors.addBtn).style.display = 'none';
+              },
             //(12) make public our UISelectors list
             getSelectors: function(){
                 return UISelectors;
@@ -226,6 +261,9 @@
             
             //(14) Add Item Event
             document.querySelector(UISelectors.addBtn).addEventListener('click', itemAddSubmit);
+
+            //(45)Edit icon click event
+            document.querySelector(UISelectors.itemList).addEventListener('click', itemUpdateSubmit);
         }
 
         //(15) Create item Add Submit function
@@ -265,12 +303,41 @@
             e.preventDefault();
         }
         
+        //(46) Update item submit
+        const itemUpdateSubmit = function(e){
+            // (47) fix the target so it just works when we click on the icon not the entire li
+            if(e.target.classList.contains('edit-item')){
+              
+                // Get list item id (we will get item-0, item-1, item-2, etc )
+              const listId = e.target.parentNode.parentNode.id;
+        
+              // Break into an array. this way will give us the item in one side, then the id ["item", "0"]
+              const listIdArr = listId.split('-');
+        
+              // Get the actual id, get it as a number
+              const id = parseInt(listIdArr[1]);
+        
+              // Get item throug a function we do in 48)
+              const itemToEdit = ItemCtrl.getItemById(id);
+        
+              // Set current item that is going to be defined in 49
+              ItemCtrl.setCurrentItem(itemToEdit);
+        
+              // Add item to form
+              UICtrl.addItemToForm();
+            }
+            //else nothing
+        
+            e.preventDefault();
+          }
+
+
         return {
             //(5)Initializer for the app. When we load the app returns a function
             init: function(){
                 
                 //(45) Clear edit state / set initial set
-                //UICtrl.clearEditState();
+                UICtrl.clearEditState();
 
                 //(7) Fetch all items from data structure
                 const items = ItemCtrl.getItems();
