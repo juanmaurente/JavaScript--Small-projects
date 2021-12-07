@@ -1,49 +1,4 @@
- /*Understanding what we have so far
-    1) Create the modules ---- 2) Create the Object Item constructor ---- 
-    3) Hardcode our data structure --- as it is private we 4) we return our items
-    5) We create our initialize function 7) brings the items from the data
-    8) Populate a the list of items into a variable item, calling the UI function
-    9) popluate list-item starts from empty html, and adds each item into an <li>
-        with += we don't overwrite each item but creates many li's
-    10) Start a list of UI selectors which we'll populate with all html elements we need
-    11) put all li's into the container
-    12) we crate a functions to get the selectors from 10, and return them to access
-    13) we started the loadEvent listeners for the buttons
-    14) First button which is the Add button. clicks does a function
-    15) we create the itemAddSubmit function, which taces the input from the form
-    16) we include the call function in the initializer
-    17) log to test
-    18) get input from form
-    19) we process the getInput dunction which returns an object
-    20) test --- 21) check if form is empty
-    22) add the item 
-    23) create the addItem function
-    24) create an auto-id generator
-    25) convert calories string into number
-    26) create the item using constructor
-    27) push it into the data structure
-    28) Add the item to the UI list through a function addListItme we create in 29
-    29) Create the addListItem function into UI controler
-    30) Create a <li> and ------ 31) Insert the Item into ItemList crated at 10
-    32) We clear the inputs after added by a function on 33) of UI Controler
-    34) remove hardcoded data
-    35) hide the list item container if is empty in UI Controler
-    36) in the initializer check if no items hide/ else populate addition to 8) and 9)
-    37) in App Controller create the totalCalories variable from the function in 38) Item Controler
-    38) In Item Controller create getTotalCalories function
-    39) set total calories and return it 
-    40) Add total calories to the UI
-    41) create showTotalCalories and display it through the UI
-    42) We want 37 and 40 when the app initialize
-    -------------------
-    43) Working with edit button. UI Controler create a method ClearEditState function
-    44)uncomment html buttons, add them to the uiselectors but then hide them
-    45)Edit icon click event. Event Delegation
-    46) Create the item edit submit function  in App Control
 
-
-    
-    */
 
 //Storage Controller
 //   (1) Create different Module Controllers
@@ -121,7 +76,7 @@
                 setCurrentItem: function(item){
                     data.currentItem = item;
                   },
-
+                  // get the current item
                 getCurrentItem: function(){
                     return data.currentItem;
                   },
@@ -213,7 +168,7 @@
                 document.querySelector(UISelectors.itemNameInput).value = '';
                 document.querySelector(UISelectors.itemCaloriesInput).value = '';
             },
-            //add the current item that has been selected into the form inputs
+            // (52)add the current item that has been selected into the form inputs
             addItemToForm: function(){
                 document.querySelector(UISelectors.itemNameInput).value = ItemCtrl.getCurrentItem().name;
                 document.querySelector(UISelectors.itemCaloriesInput).value = ItemCtrl.getCurrentItem().calories;
@@ -263,7 +218,7 @@
             document.querySelector(UISelectors.addBtn).addEventListener('click', itemAddSubmit);
 
             //(45)Edit icon click event
-            document.querySelector(UISelectors.itemList).addEventListener('click', itemUpdateSubmit);
+            document.querySelector(UISelectors.itemList).addEventListener('click', itemEditClick);
         }
 
         //(15) Create item Add Submit function
@@ -303,8 +258,8 @@
             e.preventDefault();
         }
         
-        //(46) Update item submit
-        const itemUpdateSubmit = function(e){
+        //(46) Click edit item
+        const itemEditClick = function(e){
             // (47) fix the target so it just works when we click on the icon not the entire li
             if(e.target.classList.contains('edit-item')){
               
@@ -323,7 +278,7 @@
               // Set current item that is going to be defined in 49
               ItemCtrl.setCurrentItem(itemToEdit);
         
-              // Add item to form
+              // (51) Add item data to form inputs
               UICtrl.addItemToForm();
             }
             //else nothing
@@ -365,3 +320,53 @@
 
     App.init();
 
+
+     /*Understanding what we have so far
+    1) Create the modules ---- 2) Create the Object Item constructor ---- 
+    3) Hardcode our data structure --- as it is private we 4) we return our items
+    5) We create our initialize function 7) brings the items from the data
+    8) Populate a the list of items into a variable item, calling the UI function
+    9) popluate list-item starts from empty html, and adds each item into an <li>
+        with += we don't overwrite each item but creates many li's
+    10) Start a list of UI selectors which we'll populate with all html elements we need
+    11) put all li's into the container
+    12) we crate a functions to get the selectors from 10, and return them to access
+    13) we started the loadEvent listeners for the buttons
+    14) First button which is the Add button. clicks does a function
+    15) we create the itemAddSubmit function, which taces the input from the form
+    16) we include the call function in the initializer
+    17) log to test
+    18) get input from form
+    19) we process the getInput dunction which returns an object
+    20) test --- 21) check if form is empty
+    22) add the item 
+    23) create the addItem function
+    24) create an auto-id generator
+    25) convert calories string into number
+    26) create the item using constructor
+    27) push it into the data structure
+    28) Add the item to the UI list through a function addListItme we create in 29
+    29) Create the addListItem function into UI controler
+    30) Create a <li> and ------ 31) Insert the Item into ItemList crated at 10
+    32) We clear the inputs after added by a function on 33) of UI Controler
+    34) remove hardcoded data
+    35) hide the list item container if is empty in UI Controler
+    36) in the initializer check if no items hide/ else populate addition to 8) and 9)
+    37) in App Controller create the totalCalories variable from the function in 38) Item Controler
+    38) In Item Controller create getTotalCalories function
+    39) set total calories and return it 
+    40) Add total calories to the UI
+    41) create showTotalCalories and display it through the UI
+    42) We want 37 and 40 when the app initialize
+    -------------------
+    43) Working with edit button. UI Controler create a method ClearEditState function
+    44)uncomment html buttons, add them to the uiselectors but then hide them
+    45)Edit icon click event. Event Delegation
+    46) Create the click edit item in App Control
+    47) target only when we click on the icon
+    48) Get the id of the item selected in Item Control, and return it
+    49) 
+    50) set the current item to the item
+    51) Add item data to form inputs
+    52) crete the functions which inserts the data into the form inputs
+    */
