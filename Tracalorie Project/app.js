@@ -69,9 +69,7 @@
                 {id: 2, name:'Eggs', calories: 300} 
             ]*/
             
-            items:[
-
-            ],
+            items:[],
             currentItem: null,
             totalCalories: 0
         }
@@ -82,9 +80,10 @@
                 getItems:function(){
                     return data.items;
                 },
+
                 //(23) Add items into the data structure
                 addItem: function(name, calories){
-                    
+                    let ID;    
                     //(24) we need to generate an id
                     if(data.items.length > 0){
                         ID = data.items[data.items.length -1].id + 1;
@@ -145,7 +144,7 @@
             populateItemList: function(items){
                 let html = '';
                 
-                items.forEach(item => {
+                items.forEach(function(item) {
                     html += `<li class="collection-item" id="item-${item.id}">
                     <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
                     <a href="#" class="secondary-content">
@@ -201,14 +200,14 @@
                 document.querySelector(UISelectors.totalCalories).textContent = totalCalories;
             },
             //43) EDIT BUTTON UI Controler create a method ClearEditState function
-            clearEditState: function(){
+            /*clearEditState: function(){
                 UICtrl.clearInput();
                 //(44) Hide the buttons form the begining. They still show until in the init we call this
                 document.querySelector(UISelectors.addBtn).style.display = 'inline';
                 document.querySelector(UISelectors.deleteBtn).style.display = 'none';
                 document.querySelector(UISelectors.backBtn).style.display = 'none';
                 document.querySelector(UISelectors.updateBtn).style.display = 'none';
-            },
+            },*/
             //(12) make public our UISelectors list
             getSelectors: function(){
                 return UISelectors;
@@ -271,7 +270,7 @@
             init: function(){
                 
                 //(45) Clear edit state / set initial set
-                UICtrl.clearEditState();
+                //UICtrl.clearEditState();
 
                 //(7) Fetch all items from data structure
                 const items = ItemCtrl.getItems();
@@ -280,7 +279,7 @@
                 if(items.length === 0){
                     UICtrl.hideList();
                 } else {
-                    //populate list with items
+                    //(8) Populate list with items with populateItemList function created at (9)
                     UICtrl.populateItemList(items);
                 }
 
@@ -288,8 +287,7 @@
                  const totalCalories = ItemCtrl.getTotalCalories();
                  UICtrl.showTotalCalories(totalCalories);
 
-                //(8) Populate list with items with populateItemList function created at (9)
-                UICtrl.populateItemList(items);
+                
 
                 //(16) Load Event Listeners (call the function in 15)
                 loadEventListeners();
