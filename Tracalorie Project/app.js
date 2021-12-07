@@ -72,6 +72,23 @@
                     });
                     return found;
                   },
+                  //(57) Update Item function
+                  updateItem: function(name, calories){
+                      //Calories to number
+                      calories = parseInt(calories);
+
+                      let found = null;
+                      data.items.forEach(function(item){
+                          if(item.id === data.currentItem.id){
+                              item.name = name;
+                              item.calories = calories;
+                              found = item;
+                          }
+
+                      });
+                      return found;
+
+                  },
                   //(50) set current item to item
                 setCurrentItem: function(item){
                     data.currentItem = item;
@@ -108,6 +125,7 @@
         //(10) Initialize an object called ui selectors. Doing this way it's easier to modify the code in case of changes
         const UISelectors = {
             itemList: '#item-list',
+            listItems: '#item-list li',
             addBtn: '.add-btn',
             updateBtn: '.update-btn',
             deleteBtn: '.delete-btn',
@@ -163,6 +181,26 @@
                     document.querySelector(UISelectors.itemList).insertAdjacentElement('beforeend', li);
 
             },
+            //(59) Create the updateItem function
+            updateListItem: function(item){
+                let listItems = document.querySelectorAll(UISelectors.listItems);
+
+                //as it returns a node list we cannot use forEach. convert to array
+                listItems = Array.from(listItems);
+
+                listItems.forEach(function(listItem){
+                    const itemID = listItem.getAttribute('id');
+
+                    if(itemID === `item-${item.id}`){
+                        document.querySelector(`#${itemID}`).innerHTML = `<strong>${item.name}: </strong> <em>${item.calories} Calories</em>
+                        <a href="#" class="secondary-content">
+                          <i class="edit-item fa fa-pencil"></i>
+                        </a>`
+                    }
+                })
+
+            },
+
             //(33) create the clear funciton to clean the input forms
             clearInput: function(){
                 document.querySelector(UISelectors.itemNameInput).value = '';
@@ -216,9 +254,20 @@
             
             //(14) Add Item Event
             document.querySelector(UISelectors.addBtn).addEventListener('click', itemAddSubmit);
+            
+            //(56) Disable add values with key enter
+            document.addEventListener('keypress', function(e){
+                if(e.keycode === 13 || e.which === 13){
+                    e.preventDefault();
+                    return false;
+                }
+            })
 
             //(45)Edit icon click event
             document.querySelector(UISelectors.itemList).addEventListener('click', itemEditClick);
+
+            //(54) Update button click event
+            document.querySelector(UISelectors.updateBtn).addEventListener('click', itemUpdateSubmit);
         }
 
         //(15) Create item Add Submit function
@@ -286,6 +335,24 @@
             e.preventDefault();
           }
 
+          //(55) Create the Update submit function
+          const itemUpdateSubmit = function(e){
+           //Get item input
+           const input = UICtrl.getItemInput();
+
+           //Update item
+           const updatedItem = ItemCtrl.updateItem(input.name, input.calories);
+           
+           // 58) update the UI with the updated item
+           UICtrl.updateListItem(updatedItem);
+                // 60) Get the total calories copied from 37 and 40
+                const totalCalories = ItemCtrl.getTotalCalories();
+                UICtrl.showTotalCalories(totalCalories);
+
+                UICtrl.clearEditState();
+
+            e.preventDefault();
+          }
 
         return {
             //(5)Initializer for the app. When we load the app returns a function
@@ -369,4 +436,14 @@
     50) set the current item to the item
     51) Add item data to form inputs
     52) crete the functions which inserts the data into the form inputs
+    ---------------------
+    53) Update item event when we click the update button
+    54) Create the event listener for clicking the button
+    55) Create the Update submit function
+    56) Disable add values with the "enter" key
+    57) UpdateItem function into Item Controller
+    58) update the UI with the updated item
+    59) in the UI controller, create UpdateItem function
+    60) update the total calories after updated. copied from 41
+    ----------------------------------
     */
