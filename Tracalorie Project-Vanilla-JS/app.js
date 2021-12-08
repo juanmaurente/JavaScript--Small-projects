@@ -1,10 +1,71 @@
-//Storage Controller
-//   (1) Create different Module Controllers
+//-----------------STORAGE Controller ----------------------------------------
+//   (1)(65) Create different Module Controllers
 const StorageCtrl = (function(){
-            
+
+    return {
+        //(66) StoreItem function
+        storeItem: function(item){
+            let items;
+            //local storage holds strings by default. we have to stringify the array of oobjects
+            //Check if any items
+            if(localStorage.getItem('items') === null){
+                items = [];
+                //Push new item
+                items.push(item);
+                //Set localStorage
+                localStorage.setItem('items', JSON.stringify(items));
+            } else {
+                // Get what is already in localStorage
+                items = JSON.parse(localStorage.getItem('items'));
+                //Push new item
+                items.push(item);
+                //Re Set localStorage
+                localStorage.setItem('items', JSON.stringify(items));
+            }
+
+
+        },
+        //(67) Create a method to get the data from LocalStorage
+        getItemsFromStorage: function(){
+            let items = [];
+            if(localStorage.getItem('items') === null){
+                items = [];
+            } else {
+                items = JSON.parse(localStorage.getItem('items'));
+            }
+            return items;
+        },
+        //(70) Create the UpdateItemSTORAGE METHOD
+        updateItemStorage: function(updatedItem){
+            let items = JSON.parse(localStorage.getItem('items'));
+
+            items.forEach(function(item, index){
+                if(updatedItem.id === item.id){
+                    items.splice(index, 1, updatedItem);
+                }
+            });
+            localStorage.setItem('items', JSON.stringify)
+        },
+        //(71) Create the method deleteItemFromStorage
+        deleteItemFromStorage: function(id){
+            let items = JSON.parse(localStorage.getItem('items'));
+
+            items.forEach(function(item, index){
+                if(id === item.id){
+                    items.splice(index, 1);
+                }
+            });
+            localStorage.setItem('items', JSON.stringify)
+        },
+        //(72) clearItemsStrorage Method for button
+        clearItemsFromStorage: function(){
+            localStorage.removeItem('items');
+        }
+    }
 })()
 
-//Item Controller
+//----------------- ITEM Controller ----------------------------------------
+
 //   (1) Create different Module Controllers
 const ItemCtrl = (function(){
     
@@ -24,8 +85,9 @@ const ItemCtrl = (function(){
             {id: 1, name:'Cookie', calories: 400},
             {id: 2, name:'Eggs', calories: 300} 
         ]*/
-        
-        items:[],
+
+        //(68) Get data from localStorage
+        items: StorageCtrl.getItemsFromStorage(),
         currentItem: null,
         totalCalories: 0
     }
@@ -129,9 +191,8 @@ const ItemCtrl = (function(){
         }
 })();
 
+//----------------- UI Controller ----------------------------------------
 
-
-//UI Controller
 //   (1) Create different Module Controllers
 const UICtrl = (function(){
 
@@ -257,7 +318,6 @@ const UICtrl = (function(){
             document.querySelector(UISelectors.backBtn).style.display = 'none';
             document.querySelector(UISelectors.addBtn).style.display = 'inline';  
         },
-        //()----------------------------------------------------------------------------------------------
         showEditState: function(){
             document.querySelector(UISelectors.updateBtn).style.display = 'inline';
             document.querySelector(UISelectors.deleteBtn).style.display = 'inline';
@@ -271,9 +331,10 @@ const UICtrl = (function(){
     }
 })()
 
-//App Controller
+//----------------- APPLICATION Controller ----------------------------------------
+
 //   (1) Create different Module Controllers. We have to insert the other contrllers into this one and storage
-const App = (function(ItemCtrl, UICtrl){
+const App = (function(ItemCtrl, UICtrl, StorageCtrl){ ////(67)StorageCtrl added
     
     //(13) Load event listeners in which all events will go in there
     const loadEventListeners = function(){
@@ -337,6 +398,9 @@ const App = (function(ItemCtrl, UICtrl){
             //(40) Add total calories to the UI
             UICtrl.showTotalCalories(totalCalories);
 
+            //(66) Store in localStorage
+            StorageCtrl.storeItem(newItem);
+
             //(32) Clear Fields after added
             UICtrl.clearInput();
         }
@@ -372,7 +436,7 @@ const App = (function(ItemCtrl, UICtrl){
         e.preventDefault();
       }
 
-      //(55) Create the Update submit function
+      //(55) Create the Update submit event
       const itemUpdateSubmit = function(e){
        //Get item input
        const input = UICtrl.getItemInput();
@@ -380,11 +444,14 @@ const App = (function(ItemCtrl, UICtrl){
        //Update item
        const updatedItem = ItemCtrl.updateItem(input.name, input.calories);
        
-       // 58) update the UI with the updated item
-       UICtrl.updateListItem(updatedItem);
-            // 60) Get the total calories copied from 37 and 40
+        // 58) update the UI with the updated item
+            UICtrl.updateListItem(updatedItem);
+        // 60) Get the total calories copied from 37 and 40
             const totalCalories = ItemCtrl.getTotalCalories();
             UICtrl.showTotalCalories(totalCalories);
+
+        //(69) Update local Storage
+            StorageCtrl.updateItemStorage(updatedItem);
 
             UICtrl.clearEditState();
 
@@ -407,6 +474,9 @@ const App = (function(ItemCtrl, UICtrl){
         // Add total calories to UI
         UICtrl.showTotalCalories(totalCalories);
 
+        // Delete from localStorage
+        StorageCtrl.deleteItemFromStorage(currentItem.id);
+
         UICtrl.clearEditState();
 
         e.preventDefault();
@@ -424,6 +494,9 @@ const App = (function(ItemCtrl, UICtrl){
 
         // Remove from UI
         UICtrl.removeItems();
+
+        //Clear from LocalStorage
+        StorageCtrl.clearItemsFromStorage();
 
         // Hide UL
         UICtrl.hideList();
@@ -457,7 +530,7 @@ const App = (function(ItemCtrl, UICtrl){
         }
     }
 
-})(ItemCtrl, UICtrl);
+})(ItemCtrl, UICtrl, StorageCtrl); //(67)StorageCtrl added
 
 App.init();
 
@@ -528,7 +601,20 @@ App.init();
     62) Working with delete button
     63) Create the itemDeleteSubmit event
     64) Create the delete Item function in Item Control
+    --------------------------------------------
 
+    65) Local Storage Module
+    66) I want to being able to store the different values. Create a functon
+    67) Where we want to call this function. In the App contol function takes as attribute StorageCtr as well as where its invoked.
+    66) Modify the add Item listener itemAddSubmit function
+    67) Create a method to get the data from LocalStorage
+    68) In the Item Ctrl we want to bring items from lS and put it into items datastructure
+    69) In the Update Submit function, we have to update local storage with changes
+    70) IN StorageCtrl we create the method updateItemStorage
+    69) In the Delete Submit function, we have to update local storage with deleted item
+    71) IN StorageCtrl we create the method deleteItemFromStorage
+    72) Clear all button with clearItemsFromStorage
+    73) Call clearItemsFromStorage in App Ctrl Clear items click
     
     */
 
